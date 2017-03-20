@@ -18,9 +18,9 @@ public class MyFont
     private int size;
 
 
-    public MyFont()
+    public MyFont(int size)
     {
-        this.size = 100;
+        this.size = size;
 
         batch = new SpriteBatch();
         FileHandle fontFile = Gdx.files.internal("Amble-Light.ttf");
@@ -28,7 +28,7 @@ public class MyFont
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param.size = this.size;
         param.borderColor = Color.RED;
-        param.borderWidth = 1;
+        param.borderWidth = 4;
         //param.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         font = generator.generateFont(param);
@@ -43,6 +43,28 @@ public class MyFont
         font.draw(batch, str, posX, posY);
         batch.end();
     }
+
+    public void drawTime(float time)
+    {
+        int x = (int)font.getLineHeight()/2;
+        int y = Gdx.graphics.getHeight() - x ;
+
+        batch.begin();
+        font.draw(batch, floatToScore(time)+"(s)",x,y);
+        batch.end();
+    }
+
+    public void drawScore(float time, float highScore)
+    {
+        int x = Gdx.graphics.getWidth() /2 - font.getRegion().getRegionWidth()/2;
+        int y = Gdx.graphics.getHeight() /2 + (int)(font.getLineHeight()*1.3);
+
+        batch.begin();
+        font.draw(batch, "Your score is: " + floatToScore(time)+"(s)",x,y);
+        font.draw(batch, "High score: " + floatToScore(highScore)+"(s)",x,y - font.getLineHeight());
+        batch.end();
+    }
+
 
     public SpriteBatch getBatch() {
         return batch;
@@ -59,4 +81,22 @@ public class MyFont
     public void setFont(BitmapFont font) {
         this.font = font;
     }
+
+    // taking the time and making it a score with only 2 characters after the dot
+    private String floatToScore(float time)
+    {
+        String score = String.valueOf(time);;
+        int index = 0;
+        for (int i =0; i<score.length(); i++)
+        {
+            if( (score.charAt(i) == '.'))
+                index = i;
+        }
+
+        if (score.length() > index + 3)
+            return score.substring(0, index + 3);
+
+        return score;
+    }
+
 }

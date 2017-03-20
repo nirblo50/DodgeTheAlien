@@ -22,14 +22,16 @@ public class Laser
     private int posY;
     private int acceleration;
     private boolean active;
+    private boolean onTheWay;
 
 
     public Laser()
     {
         this.active = false;
-        this.height = Gdx.graphics.getHeight() / 9;
+        this.onTheWay = false;
+        this.height = Gdx.graphics.getHeight() / 10;
         this.width = this.height /2;
-        this.posX = 0;
+        this.posX = Gdx.graphics.getWidth()/2;
         this.posY = Gdx.graphics.getHeight() - (int) (height*1.2);
         randomNextPos();
         this.acceleration = 0;
@@ -60,11 +62,15 @@ public class Laser
     }
 
 
-    public void setPosY(int posY) {
-        this.posY = posY;
+    public void setPosY(int posY)
+    {
+        if (this.active)
+            this.posY = posY;
     }
 
-    public void setPosX(int posX) {
+    public void setPosX(int posX)
+    {
+      if (this.active)
         this.posX = posX;
     }
 
@@ -109,7 +115,8 @@ public class Laser
     public void randomNextPos()
     {
         Random rnd = new Random();
-        this.nextPos = rnd.nextInt(Gdx.graphics.getWidth() - this.width) + this.width;
+        if (this.active)
+            this.nextPos = rnd.nextInt(Gdx.graphics.getWidth() - this.width*2) + this.width;
     }
 
     public boolean isActive() {
@@ -118,5 +125,13 @@ public class Laser
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void setOnTheWay(boolean onTheWay) {
+        this.onTheWay = onTheWay;
+    }
+
+    public boolean isOnTheWay() {
+        return onTheWay;
     }
 }

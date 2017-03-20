@@ -102,12 +102,12 @@ public class Alien
     public void newDirection()
     {
         Random rnd = new Random();
-        this.direction = rnd.nextInt(30)-15;
+        this.direction = rnd.nextInt(32)-16;
 
         while (this.direction >= -7 && this.direction <= 0)
-            this.direction -= 4;
+            this.direction -= 5;
         while (this.direction <= 7 && this.direction >= 0)
-            this.direction += 4;
+            this.direction += 5;
 
 
 
