@@ -36,6 +36,20 @@ public class SpaceShip
         animation = new Animation(1 / 30f, atlas.getRegions());
     }
 
+    public void drawShip(float timePast)
+    {
+        batch.begin();
+        batch.draw(animation.getKeyFrame(timePast, true), this.pos, 0, width, height);
+        batch.end();
+    }
+
+    public void drawShip(int posX, float timePast)
+    {
+        this.pos = posX;
+        batch.begin();
+        batch.draw(animation.getKeyFrame(timePast, true), posX, 0, width, height);
+        batch.end();
+    }
 
     public void setHeight(int height)
     {
@@ -45,6 +59,10 @@ public class SpaceShip
     public void setWidth(int width)
     {
         this.width = width;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
     }
 
     public int getHeight() {
@@ -72,10 +90,5 @@ public class SpaceShip
         return animation;
     }
 
-    public void drawShip(int posX, float timePast)
-    {
-        batch.begin();
-        batch.draw(animation.getKeyFrame(timePast, true), posX, 0, width, height);
-        batch.end();
-    }
+
 }

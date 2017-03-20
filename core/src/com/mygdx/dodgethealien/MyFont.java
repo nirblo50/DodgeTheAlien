@@ -2,7 +2,7 @@ package com.mygdx.dodgethealien;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -13,37 +13,50 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class MyFont
 {
-    //**************************
     private SpriteBatch batch;
-    private Texture img;
     private BitmapFont font;
-    //**************************
+    private int size;
+
 
     public MyFont()
     {
-        //******************************
-        batch = new SpriteBatch();
+        this.size = 100;
 
+        batch = new SpriteBatch();
         FileHandle fontFile = Gdx.files.internal("Amble-Light.ttf");
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
         FreeTypeFontGenerator.FreeTypeFontParameter param = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param.size = 100;
-        param.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        param.size = this.size;
+        param.borderColor = Color.RED;
+        param.borderWidth = 1;
+        //param.characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         font = generator.generateFont(param);
         generator.dispose();
-        //********************************
     }
 
 
 
     public void drawFont(String str, int posX, int posY)
     {
-        //*************************
         batch.begin();
-        //batch.draw(img, 0, 0);
         font.draw(batch, str, posX, posY);
         batch.end();
-        //*************************
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public BitmapFont getFont() {
+        return font;
+    }
+
+    public void setBatch(SpriteBatch batch) {
+        this.batch = batch;
+    }
+
+    public void setFont(BitmapFont font) {
+        this.font = font;
     }
 }

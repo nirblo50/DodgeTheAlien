@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Random;
+
 /**
  * Created by nirbl on 20/03/2017.
  */
@@ -16,27 +18,45 @@ public class Laser
     private int height;
     private int width;
     private int posX;
+    private int nextPos;
     private int posY;
+    private int acceleration;
+    private boolean active;
+
 
     public Laser()
     {
+        this.active = false;
         this.height = Gdx.graphics.getHeight() / 9;
         this.width = this.height /2;
         this.posX = 0;
-        this.posY = 0;
+        this.posY = Gdx.graphics.getHeight() - (int) (height*1.2);
+        randomNextPos();
+        this.acceleration = 0;
         this.texture = new Texture(Gdx.files.internal("laser.png"));
         this.batch = new SpriteBatch();
     }
 
     public void drawLaser(int posX, int posY)
     {
-        this.posX = posX;
-        this.posY = posY;
+        if (this.active)
+        {
+            batch.begin();
+            batch.draw(texture, posX, posY, this.width, this.height);
+            batch.end();
+            this.posX = posX;
+            this.posY = posY;
+        }
+    }
 
-        batch.begin();
-        batch.draw(texture, this.posX, this.posY, this.width, this.height);
-        batch.end();
-
+    public void drawLaser()
+    {
+        if (this.active)
+        {
+            batch.begin();
+            batch.draw(texture, this.posX, this.posY, this.width, this.height);
+            batch.end();
+        }
     }
 
 
@@ -82,4 +102,21 @@ public class Laser
     }
 
 
+    public int getNextPos() {
+        return nextPos;
+    }
+
+    public void randomNextPos()
+    {
+        Random rnd = new Random();
+        this.nextPos = rnd.nextInt(Gdx.graphics.getWidth() - this.width) + this.width;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }
