@@ -128,6 +128,9 @@ public class SpaceShip
         return startTime;
     }
 
+
+
+
     public void setStartTime(float startTime)
     {
         if (this.startTime == 0)

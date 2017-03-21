@@ -67,7 +67,7 @@ public class Explosion
         return pos;
     }
 
-    public TextureAtlas getDrive() {
+    public TextureAtlas getTexture() {
         return exp;
     }
 

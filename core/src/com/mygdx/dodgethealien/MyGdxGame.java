@@ -51,8 +51,8 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		shieldBall = new ShieldBall(8);						// setting the shield ball
 		explosion = new Explosion();						// setting the explosion
 		//***********************************
-		this.aliens = new Alien[5];							// setting the aliens
-		this.lasers = new Laser[10];						// setting the lasers
+		this.aliens = new Alien[13];							// setting the aliens
+		this.lasers = new Laser[aliens.length*2];						// setting the lasers
 		//***********************************
 
 		//o variables statements
@@ -89,7 +89,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		float accelZ = Gdx.input.getAccelerometerZ();		//o the Z tilt of the phone
 
 
-
 		if(!isGame && !gameLost)
 			startMenu.drawMenu();
 
@@ -107,25 +106,31 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 
 			//o laser's location and drawing (laser activation) for the first 2 aliens
 			setLaserLocation(aliens[0], lasers[0]);
-			setLaserLocation(aliens[0], lasers[1]);
-			setLaserLocation(aliens[1], lasers[2]);
-			setLaserLocation(aliens[1], lasers[3]);
 
-			//o laser's location and drawing (laser activation) for all the other aliens (other 4)
-			for (int i = 2; i<aliens.length; i++)
+			//setLaserLocation(aliens[0], lasers[1]);
+			//setLaserLocation(aliens[1], lasers[2]);
+			//setLaserLocation(aliens[1], lasers[3]);
+
+			//o laser's location and drawing (laser activation) for all the other aliens
+			for (int i = 1; i<aliens.length; i++)
 			{
-					setLaserLocation(aliens[i], lasers[i * 2]);
-					setLaserLocation(aliens[i], lasers[i * 2 + 1]);
+				setLaserLocation(aliens[i], lasers[i * 2]);
+				setLaserLocation(aliens[i], lasers[i * 2 + 1]);
+				if (aliens[i].isActive())
+					setAlienLocation(aliens[i]);
 			}
 
 			//o alien's location and drawing (alien activation)
 			for (int i=0; i<aliens.length; i++)
-				// every 5 second another ship starts
-				if ((int)timeScore /5 > i || i==1)
-					setAlienLocation(aliens[i]);
+			{
+				if ((int) timeScore / 5 > i || i == 1)		// every 5 second another ship starts
+				//setAlienLocation(aliens[i]);
+				 aliens[i].setActive(true);
+			}
 
 			//o ship's location and drawing (ship activation)
 			setShipLocation(spaceShip, accelX, accelY);            // sets the ship's location according to the phone tilt
+
 
 		}
 		else if(gameLost)
@@ -156,6 +161,8 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 	{
 		spaceShip.getBatch().dispose();
 		spaceShip.getAtlas().dispose();
+		spaceShip.getBatch2().dispose();
+		spaceShip.getTexture().dispose();
 
 		for (int i=0; i<aliens.length; i++)
 		{
@@ -184,6 +191,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		timeText.getFont().dispose();
 		timeText.getShieldBall().getBatch().dispose();
 		timeText.getShieldBall().getAtlas().dispose();
+
+		explosion.getBatch().dispose();
+		explosion.getTexture().dispose();
+
+		shieldBall.getBatch().dispose();
+		shieldBall.getAtlas().dispose();
+
 	}
 
 
@@ -235,7 +249,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		int x2 = Gdx.graphics.getWidth();		// the right start location
 
 		// if alien is on the screen
-		if ( (alien.getPos() >= x1) && (alien.getPos() <= x2) )
+		if ( (alien.getPos() >= x1) && (alien.getPos() <= x2) && alien.isActive())
 		{
 			// if alien has reached the point of shot
 			if(!laser.isActive() &&  (((alien.getDirection()>0) && (alien.getPos() > laser.getNextPos()) ) || ((alien.getDirection()<0) && (alien.getPos() < laser.getNextPos())  ) ) )
@@ -265,9 +279,10 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 	{
 		int y = Gdx.graphics.getHeight();
 		int speed = (Gdx.graphics.getHeight() * 20) / 2560;
+		int time = 10;
 
 		//activate shield ball every 10 seconds
-		if ( (int)timeScore % 10 == 0  && (int) timeScore != 0)
+		if ( (int)timeScore % time == 0  && (int) timeScore != 0)
 			ball.setActive(true);
 
 		// if shield is active
@@ -292,10 +307,10 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 
 	public  boolean didTakeBall(SpaceShip ship, ShieldBall ball)
 	{
-		int x1 = ship.getPos();
-		int x2 = x1 + ship.getWidth();
-		int x3 = ball.getPosX();
-		int x4 = x3 + ball.getSize();
+		int x1 = ship.getPos();											// the left side if the ship
+		int x2 = x1 + ship.getWidth();									// the right side if the ship
+		int x3 = ball.getPosX();						    			// the left side if the laser
+		int x4 = x3 + ball.getSize();									// the right side if the laser
 
 		int y1 = ship.getHeight();
 		int y2 = ball.getPosY();
@@ -318,10 +333,10 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 	//o checks if laser has hit the ship
 	public boolean isCrash (SpaceShip ship, Laser laser)
 	{
-		int x1 = ship.getPos();
-		int x2 = x1 + ship.getWidth();
-		int x3 = laser.getPosX();
-		int x4 = x3 + laser.getWidth();
+		int x1 = ship.getPos()+ ship.getWidth()/8;						// the left side if the ship
+		int x2 = x1 + ship.getWidth() - (int)(ship.getWidth() / 4);									// the right side if the ship
+		int x3 = laser.getPosX();										// the left side if the laser
+		int x4 = x3 + laser.getWidth();									// the right side if the laser
 
 		int y1 = ship.getHeight();
 		int y2 = laser.getPosY();

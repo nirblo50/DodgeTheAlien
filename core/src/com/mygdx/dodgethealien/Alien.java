@@ -20,7 +20,7 @@ public class Alien
     private int width;     // alien's width
     private int pos;       // alien's position
     private int direction;  // alien's direction
-
+    private boolean active;
 
     private SpriteBatch batch;
     private TextureAtlas atlas;
@@ -42,7 +42,8 @@ public class Alien
     public void drawAlien(float timePast)
     {
         batch.begin();
-        batch.draw(animation.getKeyFrame(timePast, true), this.pos, Gdx.graphics.getHeight() - (int)(this.height*0.8), width, height);
+        if (this.active)
+            batch.draw(animation.getKeyFrame(timePast, true), this.pos, Gdx.graphics.getHeight() - (int)(this.height*0.8), width, height);
         batch.end();
     }
 
@@ -64,8 +65,10 @@ public class Alien
         this.width = width;
     }
 
-    public void setPos(int pos) {
-        this.pos = pos;
+    public void setPos(int pos)
+    {
+       if (this.active)
+         this.pos = pos;
     }
 
     public Batch getBatch()
@@ -99,21 +102,12 @@ public class Alien
         return direction;
     }
 
-    public void newDirection2()
-    {
-        int x = graphics.getWidth() * (40/1440) ;
-        int y = graphics.getWidth() * (8/1440);
-        int z = graphics.getWidth() * (12/1440);
-        Random rnd = new Random();
-        this.direction = rnd.nextInt(40)- 20;
-        this.direction = graphics.getWidth() * this.direction/1440;
-        System.out.println("********   "+this.direction+ "  ***************");
+    public boolean isActive() {
+        return active;
+    }
 
-        while (this.direction >= -y && this.direction <= 0)
-            this.direction -= z;
-        while (this.direction <= y && this.direction >= 0)
-            this.direction += z;
-
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void newDirection()
