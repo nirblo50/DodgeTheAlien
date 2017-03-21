@@ -192,7 +192,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 
 		}
 		alien.drawAlien(timePast);
-
+		System.out.println("********   "+alien.getDirection()+ "  ***************");
 	}
 
 
@@ -223,7 +223,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 
 		// if laser has not reached all the way down yet
 		if (laser.isActive() && laser.getPosY() >= -laser.getHeight())
-			laser.setPosY(laser.getPosY()-18);
+			laser.setPosY(laser.getPosY() - (int)(graphics.getHeight() *18 /2560 ));
 
 		laser.drawLaser();
 	}

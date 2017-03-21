@@ -99,17 +99,34 @@ public class Alien
         return direction;
     }
 
+    public void newDirection2()
+    {
+        int x = graphics.getWidth() * (40/1440) ;
+        int y = graphics.getWidth() * (8/1440);
+        int z = graphics.getWidth() * (12/1440);
+        Random rnd = new Random();
+        this.direction = rnd.nextInt(40)- 20;
+        this.direction = graphics.getWidth() * this.direction/1440;
+        System.out.println("********   "+this.direction+ "  ***************");
+
+        while (this.direction >= -y && this.direction <= 0)
+            this.direction -= z;
+        while (this.direction <= y && this.direction >= 0)
+            this.direction += z;
+
+    }
+
     public void newDirection()
     {
         Random rnd = new Random();
-        this.direction = rnd.nextInt(32)-16;
-
-        while (this.direction >= -7 && this.direction <= 0)
-            this.direction -= 5;
-        while (this.direction <= 7 && this.direction >= 0)
-            this.direction += 5;
-
-
+        rnd = new Random();
+        int a = rnd.nextInt(10);
+        int b = rnd.nextInt(10)+10;
+        b = graphics.getWidth() * b / 2560;
+        if (a >= 5)
+            this.direction = b;
+        else
+            this.direction = -b;
 
     }
 }
