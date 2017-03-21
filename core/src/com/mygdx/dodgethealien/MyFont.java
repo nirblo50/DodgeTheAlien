@@ -16,12 +16,13 @@ public class MyFont
     private SpriteBatch batch;
     private BitmapFont font;
     private int size;
+    private ShieldBall shieldBall;
 
 
     public MyFont(int size)
     {
         this.size = size;
-
+        this.shieldBall = new ShieldBall(17);
         batch = new SpriteBatch();
         FileHandle fontFile = Gdx.files.internal("Amble-Light.ttf");
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
@@ -44,14 +45,20 @@ public class MyFont
         batch.end();
     }
 
-    public void drawTime(float time)
+    public void drawTime(float time, float timePast, int shieldNum)
     {
         int x = (int)font.getLineHeight()/2;
         int y = Gdx.graphics.getHeight() - x ;
+        int a = Gdx.graphics.getHeight() - ((int)(font.getLineHeight()*1.3)) - shieldBall.getSize();
+
+        shieldBall.drawShieldBall((int)font.getSpaceWidth(), a, timePast);
 
         batch.begin();
         font.draw(batch, floatToScore(time)+"(s)",x,y);
+        font.draw(batch, "  x " + shieldNum, shieldBall.getSize(), a + (int)(font.getLineHeight()/1.3));
         batch.end();
+
+
     }
 
     public void drawScore(float time, float highScore)
@@ -99,4 +106,7 @@ public class MyFont
         return score;
     }
 
+    public ShieldBall getShieldBall() {
+        return shieldBall;
+    }
 }

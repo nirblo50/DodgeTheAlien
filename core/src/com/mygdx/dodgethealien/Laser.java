@@ -33,7 +33,7 @@ public class Laser
         this.width = this.height /2;
         this.posX = Gdx.graphics.getWidth()/2;
         this.posY = Gdx.graphics.getHeight() - (int) (height*1.2);
-        randomNextPos();
+        this.nextPos = Gdx.graphics.getWidth()/2 - width/2;
         this.acceleration = 0;
         this.texture = new Texture(Gdx.files.internal("laser.png"));
         this.batch = new SpriteBatch();

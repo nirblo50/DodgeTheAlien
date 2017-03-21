@@ -41,4 +41,7 @@ public class LostMenu
     }
 
 
+    public MyFont getFont() {
+        return font;
+    }
 }
