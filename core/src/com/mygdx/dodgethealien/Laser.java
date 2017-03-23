@@ -22,13 +22,12 @@ public class Laser
     private int posY;
     private int acceleration;
     private boolean active;
-    private boolean onTheWay;
+
 
 
     public Laser()
     {
         this.active = false;
-        this.onTheWay = false;
         this.height = Gdx.graphics.getHeight() / 10;
         this.width = this.height /2;
         this.posX = Gdx.graphics.getWidth()/2;
@@ -125,13 +124,5 @@ public class Laser
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public void setOnTheWay(boolean onTheWay) {
-        this.onTheWay = onTheWay;
-    }
-
-    public boolean isOnTheWay() {
-        return onTheWay;
     }
 }

@@ -22,6 +22,8 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 	private LostMenu lostMenu;			// the lost menu
 	private ShieldBall shieldBall;		// the shield ball
 	private Explosion explosion;		// the explosion
+	private Button pauseButton;			// the pause button
+	private Button playButton;			// the play button
 	//********************************
 	private Alien [] aliens;			// the aliens
 	private Laser [] lasers;			// the lasers
@@ -48,19 +50,22 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		this.timeText = new MyFont(75);						// setting the text's variable
 		this.startMenu = new StartMenu();					// setting the start menu
 		this.lostMenu = new LostMenu();						// setting the lost menu
-		shieldBall = new ShieldBall(8);						// setting the shield ball
-		explosion = new Explosion();						// setting the explosion
+		this.shieldBall = new ShieldBall(8);				// setting the shield ball
+		this.explosion = new Explosion();					// setting the explosion
+		this.pauseButton = new Button("pause");				// setting the pause button
+		this.playButton = new Button("play");				// setting the play button
+
 		//***********************************
-		this.aliens = new Alien[13];							// setting the aliens
-		this.lasers = new Laser[aliens.length*2];						// setting the lasers
+		this.aliens = new Alien[13];						// setting the aliens
+		this.lasers = new Laser[aliens.length*2];			// setting the lasers
 		//***********************************
 
 		//o variables statements
 		timePast = 0;										// the time that passed since app started
 		timeScore = 0;										// the time that passed since game actually started
-		isGame = false;									// game not started, show menu
+		isGame = false;										// game not started, show menu
 		gameLost = false;									// game was lost
-		shieldNum = 0;
+		shieldNum = 0;										// the number of shields player has
 
 		//o pull the high score from memory
 		prefs = Gdx.app.getPreferences("highScore");
@@ -93,7 +98,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 			startMenu.drawMenu();
 
 		// if the game has started and player did not lose yet
-		if (isGame)
+		if (isGame && !playButton.isActive())
 		{
 			timeScore += graphics.getDeltaTime();;
 			didLose(spaceShip, lasers);		// checks if the game was lost and change the isGame and didLose flags
@@ -104,34 +109,32 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 			//o checks if player took ball, and act accordingly
 			didTakeBall(spaceShip, shieldBall);
 
-			//o laser's location and drawing (laser activation) for the first 2 aliens
-			setLaserLocation(aliens[0], lasers[0]);
 
-			//setLaserLocation(aliens[0], lasers[1]);
-			//setLaserLocation(aliens[1], lasers[2]);
-			//setLaserLocation(aliens[1], lasers[3]);
-
-			//o laser's location and drawing (laser activation) for all the other aliens
-			for (int i = 1; i<aliens.length; i++)
+			//o laser's location and drawing (laser activation) for all the aliens
+			for (int i = 0; i<aliens.length; i++)
 			{
-				setLaserLocation(aliens[i], lasers[i * 2]);
-				setLaserLocation(aliens[i], lasers[i * 2 + 1]);
+
+				if (i ==0)
+					setLaserLocation(aliens[0], lasers[0]);
+				else
+				{
+					setLaserLocation(aliens[i], lasers[i * 2]);
+					setLaserLocation(aliens[i], lasers[i * 2 + 1]);
+				}
+			}
+
+
+			// control the aliens and activate them one by one
+			for (int i = 0; i<aliens.length; i++)
+			{
+				if ((int) timeScore / 3 > i || i == 1)		// every 3 second another ship starts
+					aliens[i].setActive(true);
 				if (aliens[i].isActive())
 					setAlienLocation(aliens[i]);
 			}
 
-			//o alien's location and drawing (alien activation)
-			for (int i=0; i<aliens.length; i++)
-			{
-				if ((int) timeScore / 5 > i || i == 1)		// every 5 second another ship starts
-				//setAlienLocation(aliens[i]);
-				 aliens[i].setActive(true);
-			}
-
 			//o ship's location and drawing (ship activation)
 			setShipLocation(spaceShip, accelX, accelY);            // sets the ship's location according to the phone tilt
-
-
 		}
 		else if(gameLost)
 		{
@@ -152,7 +155,21 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		}
 
 
+		// pause button activation
+		if (pauseButton.isActive())
+			pauseButton.drawPause();
 
+		// play button activation
+		if (playButton.isActive())
+		{
+			for (int i = 0; i <aliens.length; i++)
+				aliens[i].drawAlien(timePast);
+			for (int i = 0; i <lasers.length; i++)
+				lasers[i].drawLaser();
+			
+			spaceShip.drawShip(timePast);
+			playButton.drawPlay();
+		}
 
 	}
 	
@@ -247,6 +264,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 		//o variables
 		int x1 = -alien.getWidth();				// the left start location
 		int x2 = Gdx.graphics.getWidth();		// the right start location
+		int speed = 20;
 
 		// if alien is on the screen
 		if ( (alien.getPos() >= x1) && (alien.getPos() <= x2) && alien.isActive())
@@ -268,7 +286,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 
 		// if laser has not reached all the way down yet
 		if (laser.isActive() && laser.getPosY() >= -laser.getHeight())
-			laser.setPosY(laser.getPosY() - (int)(graphics.getHeight() *18 /2560 ));
+			laser.setPosY(laser.getPosY() - (int)(graphics.getHeight() *speed /2560 ));
 
 		laser.drawLaser();
 	}
@@ -372,17 +390,46 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
+		int touchX = screenX;								// the X of the touch
+		int touchY = Gdx.graphics.getHeight() - screenY;	// the Y of the touch
+
+		// if player has started the game
 		if (!isGame && !gameLost)
 		{
 			isGame = true;
 			timeScore = 0;
+			this.pauseButton.setActive(true);
 		}
 
+		// if player uses his shield
 		if (isGame && shieldNum > 0 &&!spaceShip.isShiledOn())
 		{
 			this.spaceShip.setStartTime(timeScore);
 			shieldNum --;
 		}
+
+		// if player pressed pause
+		if (pauseButton.isActive() && touchX >= pauseButton.getPausePosX() && touchX <= pauseButton.getPausePosX() + pauseButton.getSize())
+		{
+			if (touchY >= pauseButton.getPausePosY() && touchY <= pauseButton.getPausePosY() + pauseButton.getSize())
+			{
+				playButton.setActive(true);
+				pauseButton.setActive(false);
+			}
+		}
+
+		// if player pressed pause
+		if (playButton.isActive() && touchX >= playButton.getPlayPosX() && touchX <= playButton.getPlayPosX() + playButton.getSize())
+		{
+			if (touchY >= playButton.getPlayPosY() && touchY <= playButton.getPlayPosY() + playButton.getSize())
+			{
+				playButton.setActive(false);
+				pauseButton.setActive(true);
+			}
+		}
+
+
+
 
 		if (gameLost)
 			create();

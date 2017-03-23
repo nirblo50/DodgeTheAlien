@@ -36,7 +36,7 @@ public class Alien
 
         batch = new SpriteBatch();
         atlas = new TextureAtlas(Gdx.files.internal("alien.atlas"));    //creates the animation of the alien
-        animation = new Animation(1 / 30f, atlas.getRegions());
+        animation = new Animation(1 / 15f, atlas.getRegions());
     }
 
     public void drawAlien(float timePast)

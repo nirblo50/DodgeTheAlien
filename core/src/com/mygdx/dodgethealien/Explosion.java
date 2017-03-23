@@ -33,7 +33,7 @@ public class Explosion
 
         batch = new SpriteBatch();
         exp = new TextureAtlas(Gdx.files.internal("explosion.atlas"));    //creats the animation of the left boat
-        animation = new Animation(1 / 22f, exp.getRegions());
+        animation = new Animation(1 / 20f, exp.getRegions());
     }
 
     public void drawExplosion(SpaceShip ship, float timePast)
