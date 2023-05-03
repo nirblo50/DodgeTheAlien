@@ -1,5 +1,7 @@
 # DodgeTheAlien
 
+<img align="center" alt="game_image" src="game_running.gif" height="300">
+
 ##  About this project
 ```bash
 This project is an Android-game, the Purpose of the game is to last as long as you can without getting killed by the aliens.
